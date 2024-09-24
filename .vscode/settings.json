@@ -1,3 +1,17 @@
 {
-    "makefile.configureOnOpen": false
+    "makefile.configureOnOpen": false,
+    "files.associations": {
+        "*.json": "snippets",
+        "*.cjson": "jsonc",
+        "*.wxss": "css",
+        "*.wxs": "javascript",
+        "*.c": "c",
+        "*.cpp": "cpp",
+        "*.hpp": "cpp",
+        "*.h": "c",
+        "*.sh": "bash",
+        "*.py": "python",
+        "*.rs": "rust",
+        "cstdlib": "c"
+    }
 }

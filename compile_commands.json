@@ -1165,5 +1165,30 @@
     "directory": "/home/wangsf/workspace/2.lab/os/xv6-labs-2020",
     "file": "/home/wangsf/workspace/2.lab/os/xv6-labs-2020/user/zombie.c",
     "output": "/home/wangsf/workspace/2.lab/os/xv6-labs-2020/user/zombie.o"
+  },
+  {
+    "arguments": [
+      "/usr/sbin/riscv64-linux-gnu-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-DSOL_UTIL",
+      "-mcmodel=medany",
+      "-ffreestanding",
+      "-fno-common",
+      "-mno-relax",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-c",
+      "-o",
+      "user/sleep.o",
+      "user/sleep.c"
+    ],
+    "directory": "/home/wangsf/workspace/2.lab/os/xv6-labs-2020",
+    "file": "/home/wangsf/workspace/2.lab/os/xv6-labs-2020/user/sleep.c",
+    "output": "/home/wangsf/workspace/2.lab/os/xv6-labs-2020/user/sleep.o"
   }
 ]
