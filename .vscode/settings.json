@@ -12,6 +12,8 @@
         "*.sh": "bash",
         "*.py": "python",
         "*.rs": "rust",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "bitset": "c",
+        "*.inc": "c"
     }
 }
