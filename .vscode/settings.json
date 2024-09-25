@@ -15,6 +15,13 @@
         "cstdlib": "c",
         "bitset": "c",
         "*.inc": "c",
-        "cstring": "c"
+        "cstring": "c",
+        "*.tcc": "c",
+        "iosfwd": "c",
+        "istream": "c",
+        "limits": "c",
+        "sstream": "c",
+        "stop_token": "c",
+        "streambuf": "c"
     }
 }
