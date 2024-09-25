@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
             // sleep(10);
             char buf[2];
             read(sR_fW[0], buf, 1); // blocked here
-            printf("%d:received ping\n", getpid());
+            printf("%d: received ping\n", getpid());
             write(fR_sW[1], "s", 1);
             exit(0);
         }
@@ -23,12 +23,13 @@ int main(int argc, char const *argv[])
             write(sR_fW[1], "f", 1);
             char buf[2];
             read(fR_sW[0], buf, 1);
-            printf("%d:received pong\n", getpid());
+            printf("%d: received pong\n", getpid());
             exit(0);
         }
     }
     else
     {
         printf("error when sys_pipe\n");
+        exit(1);
     }
 }

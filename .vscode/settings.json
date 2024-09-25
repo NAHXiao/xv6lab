@@ -14,6 +14,7 @@
         "*.rs": "rust",
         "cstdlib": "c",
         "bitset": "c",
-        "*.inc": "c"
+        "*.inc": "c",
+        "cstring": "c"
     }
 }
