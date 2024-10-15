@@ -7,6 +7,8 @@
 #include "spinlock.h"
 #include "proc.h"
 
+// #include "syscall.h"
+// #define trace_syscall(SYSCALL) (((myproc()->trace_mask>>SYSCALL) & 1))
 uint64
 sys_exit(void)
 {
@@ -94,4 +96,16 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+
+uint64 sys_trace(void){
+  //
+int trace_mask;
+  if(argint(0, &trace_mask) < 0){
+    return -1;
+  }
+  // myproc()->trace_mask|=trace_mask;
+  myproc()->trace_mask=trace_mask;
+  return 0;
 }

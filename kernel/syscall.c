@@ -105,6 +105,8 @@ extern uint64 sys_wait(void);
 extern uint64 sys_write(void);
 extern uint64 sys_uptime(void);
 
+extern uint64 sys_trace(void);
+
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
 [SYS_exit]    sys_exit,
@@ -127,17 +129,57 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_trace]   sys_trace,
 };
+static char* syscall_name[]={//没有0
+[SYS_fork]    "fork",
+[SYS_exit]    "exit",
+[SYS_wait]    "wait",
+[SYS_pipe]    "pipe",
+[SYS_read]    "read",
+[SYS_kill]    "kill",
+[SYS_exec]    "exec",
+[SYS_fstat]   "fstat",
+[SYS_chdir]   "chdir",
+[SYS_dup]     "dup",
+[SYS_getpid]  "getpid",
+[SYS_sbrk]    "sbrk",
+[SYS_sleep]   "sleep",
+[SYS_uptime]  "uptime",
+[SYS_open]    "open",
+[SYS_write]   "write",
+[SYS_mknod]   "mknod",
+[SYS_unlink]  "unlink",
+[SYS_link]    "link",
+[SYS_mkdir]   "mkdir",
+[SYS_close]   "close",
+[SYS_trace]   "trace",
+};
+void sys_trace_print(uint64 trace_mask,uint64 syscallnum,uint64 ret){
+  if((trace_mask>>syscallnum)&1){
+    printf("%d: syscall %s -> %d\n",myproc()->pid,syscall_name[syscallnum],ret);
+  }
+  // for(int i=1;i<(sizeof(syscall_name)/sizeof(char*));i++){
+  //  int has = (trace_mask>>i )&1;
+  //  if(has!=0){
+    // 408: syscall fork -> 409
+    // printf("%d: syscall %s -> %d\n",myproc()->pid,syscall_name[i],ret);
+  //  }
+  // }
+}
 
 void
 syscall(void)
 {
   int num;
   struct proc *p = myproc();
+  int syscallnum=p->trapframe->a7;
 
-  num = p->trapframe->a7;
+  num = p->trapframe->a7;//a7:系统调用号:1,2...
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    p->trapframe->a0 = syscalls[num]();
+    uint64 ret = syscalls[num]();//a0:系统调用函数执行返回值
+    p->trapframe->a0 = ret;
+    sys_trace_print(p->trace_mask,syscallnum,ret);
   } else {
     printf("%d %s: unknown sys call %d\n",
             p->pid, p->name, num);

@@ -149,6 +149,7 @@ freeproc(struct proc *p)
   p->chan = 0;
   p->killed = 0;
   p->xstate = 0;
+  p->trace_mask=0;
   p->state = UNUSED;
 }
 
@@ -276,6 +277,8 @@ fork(void)
   np->sz = p->sz;
 
   np->parent = p;
+
+  np->trace_mask=p->trace_mask;//DONE:SYS_trace跟踪子进程
 
   // copy saved user registers.
   *(np->trapframe) = *(p->trapframe);
