@@ -109,3 +109,27 @@ int trace_mask;
   myproc()->trace_mask=trace_mask;
   return 0;
 }
+
+extern uint64 get_used_procnum();
+extern uint64 get_kmemfreespc();
+#include "sysinfo.h"
+uint64 sys_sysinfo(void){
+  uint64 addr=0;
+  //  struct sysinfo *si=0;
+  //  if(argaddr(0,(uint64*)&si)<0){
+   if(argaddr(0,&addr)<0){
+      return -1;
+   }
+   if(addr==0){
+    return -1;
+   }
+   struct sysinfo si = {
+      4096*get_kmemfreespc(),
+      get_used_procnum()
+   };
+  //  printf("freeprocnum:%d,kmemfree:%d\n",si.nproc,si.freemem);
+ if (copyout(myproc()->pagetable,addr , (char *)&si, sizeof(si)) < 0){
+    return -1;
+ }
+  return 0;
+}

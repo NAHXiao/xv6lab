@@ -26,6 +26,9 @@ int uptime(void);
 
 int trace(int);
 
+struct sysinfo;//SYSINFO.1
+int sysinfo(struct sysinfo*);
+
 // ulib.c
 int stat(const char*, struct stat*);
 char* strcpy(char*, const char*);

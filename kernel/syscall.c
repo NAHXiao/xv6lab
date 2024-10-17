@@ -107,6 +107,8 @@ extern uint64 sys_uptime(void);
 
 extern uint64 sys_trace(void);
 
+extern uint64 sys_sysinfo(void);//SYSINFO.3
+
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
 [SYS_exit]    sys_exit,
@@ -130,6 +132,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_trace]   sys_trace,
+[SYS_sysinfo]   sys_sysinfo,//SYSINFO.4
 };
 static char* syscall_name[]={//没有0
 [SYS_fork]    "fork",
@@ -154,18 +157,12 @@ static char* syscall_name[]={//没有0
 [SYS_mkdir]   "mkdir",
 [SYS_close]   "close",
 [SYS_trace]   "trace",
+[SYS_sysinfo]   "sysinfo",//SYSINFO.4
 };
 void sys_trace_print(uint64 trace_mask,uint64 syscallnum,uint64 ret){
   if((trace_mask>>syscallnum)&1){
     printf("%d: syscall %s -> %d\n",myproc()->pid,syscall_name[syscallnum],ret);
   }
-  // for(int i=1;i<(sizeof(syscall_name)/sizeof(char*));i++){
-  //  int has = (trace_mask>>i )&1;
-  //  if(has!=0){
-    // 408: syscall fork -> 409
-    // printf("%d: syscall %s -> %d\n",myproc()->pid,syscall_name[i],ret);
-  //  }
-  // }
 }
 
 void
