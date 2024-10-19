@@ -69,7 +69,8 @@ kvminithart()
 //   12..20 -- 9 bits of level-0 index.
 //    0..11 -- 12 bits of byte offset within the page.
 pte_t *
-walk(pagetable_t pagetable, uint64 va, int alloc)
+walk(pagetable_t pagetable, uint64 va, int alloc)//NOTE:为虚拟地址找到PTE
+//TODO:kmap依赖walk依赖kpagetable,kpagetable依赖kmap?
 {
   if(va >= MAXVA)
     panic("walk");
@@ -115,7 +116,7 @@ walkaddr(pagetable_t pagetable, uint64 va)
 // only used when booting.
 // does not flush TLB or enable paging.
 void
-kvmmap(uint64 va, uint64 pa, uint64 sz, int perm)
+kvmmap(uint64 va, uint64 pa, uint64 sz, int perm)//NOTE: va:vitual address ; pa: physical address
 {
   if(mappages(kernel_pagetable, va, sz, pa, perm) != 0)
     panic("kvmmap");
@@ -146,7 +147,7 @@ kvmpa(uint64 va)
 // be page-aligned. Returns 0 on success, -1 if walk() couldn't
 // allocate a needed page-table page.
 int
-mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
+mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)//NOTE:为新映射装载PTE
 {
   uint64 a, last;
   pte_t *pte;
@@ -352,7 +353,7 @@ uvmclear(pagetable_t pagetable, uint64 va)
 // Copy len bytes from src to virtual address dstva in a given page table.
 // Return 0 on success, -1 on error.
 int
-copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
+copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)//NOTE: 复制K->U
 {
   uint64 n, va0, pa0;
 
@@ -377,7 +378,7 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
 // Copy len bytes to dst from virtual address srcva in a given page table.
 // Return 0 on success, -1 on error.
 int
-copyin(pagetable_t pagetable, char *dst, uint64 srcva, uint64 len)
+copyin(pagetable_t pagetable, char *dst, uint64 srcva, uint64 len)//NOTE: 复制U->K
 {
   uint64 n, va0, pa0;
 
@@ -439,4 +440,51 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
   } else {
     return -1;
   }
+}
+
+
+
+
+
+//NOTE:拙略的模仿...
+static inline void print_indent(uint64 indent)
+{
+    for (uint64 i = 0; i < indent; i++) {
+        printf(i ? " .." : "..");
+    }
+}
+//NOTE:拙略的模仿...
+void vmprint(pagetable_t p)
+{
+    printf("page table %p\n", p);
+#define NOTLEAF(pte) ((pte & PTE_V) && (pte & (PTE_R | PTE_W | PTE_X)) == 0)
+#define LEAF(pte) (pte & PTE_V)
+    for (int i = 0; i < 512; i++) {
+        pte_t pte = p[i];
+        if (pte && NOTLEAF(pte)) {
+            pagetable_t child = (pagetable_t)PTE2PA(pte);
+            if (child) {
+                print_indent(1);
+                printf("%d: pte %p pa %p\n", i, pte, child);
+                for (int j = 0; j < 512; j++) {
+                    pte_t pte2 = child[j];
+                    if (pte2 && NOTLEAF(pte2)) {
+                        pagetable_t child2 = (pagetable_t)PTE2PA(pte2);
+                        if (child2) {
+                            print_indent(2);
+                            printf("%d: pte %p pa %p\n", j, pte2, child2);
+                            for (int k = 0; k < 512; k++) {
+                                pte_t pte3 = child2[k];
+                                pagetable_t child3 = (pagetable_t)PTE2PA(pte3);
+                                if (pte3 && LEAF(pte3)) {
+                                    print_indent(3);
+                                    printf("%d: pte %p pa %p\n", k, pte3, child3);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
